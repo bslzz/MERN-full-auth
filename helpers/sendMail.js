@@ -27,6 +27,7 @@ const sendMail = (to, url) => {
   });
 
   const accessToken = oauth2Client.getAccessToken();
+  console.log(accessToken);
   const smtpTransport = nodemailer.createTransport({
     service: 'gmail',
     auth: {

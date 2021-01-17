@@ -1,4 +1,5 @@
 const Users = require('../models/userModel');
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const jwtCtrl = require('../helpers/jwt');
 const sendMail = require('../helpers/sendMail');
@@ -29,7 +30,6 @@ module.exports = {
       //password hash
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      //save to mongodb
       const newUser = {
         name,
         email,
@@ -39,12 +39,57 @@ module.exports = {
       const activation_token = jwtCtrl.createActivationToken(newUser);
 
       const url = `${process.env.CLIENT_URL}/user/activate/${activation_token}`;
-      console.log(url);
       sendMail(email, url);
 
       res.json({
         msg: 'Register Success! Please activate your email to start',
       });
+    } catch (err) {
+      res.status(500).json({ msg: err.message });
+    }
+  },
+
+  //after email is activated then user data is saved to mongodb
+  activateEmail: async (req, res) => {
+    try {
+      const { activation_token } = req.body;
+      const user = jwt.verify(
+        activation_token,
+        process.env.ACTIVATION_TOKEN_SECRET
+      );
+      const { name, email, password } = user;
+      const check = await Users.findOne({ email });
+      if (check)
+        return res.status(400).json({ msg: 'This email already exists' });
+      const newUser = new Users({
+        name,
+        email,
+        password,
+      });
+      await newUser.save();
+      res.json({ msg: 'Account has been activated' });
+    } catch (err) {
+      res.status(500).json({ msg: err.message });
+    }
+  },
+
+  login: async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      const user = await Users.findOne({ email });
+      if (!user)
+        return res.status(400).json({ msg: 'This email does not exist' });
+
+      const matchPassword = await bcrypt.compare(password, user.password);
+      if (!matchPassword)
+        return res.status(400).json({ msg: 'Invalid email/password' });
+      const refresh_token = jwtCtrl.createRefreshToken({ id: user._id });
+      res.cookie('refreshtoken', refresh_token, {
+        httpOnly: true,
+        path: '/user/refresh_token',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7days
+      });
+      res.json({ msg: 'Login success' });
     } catch (err) {
       res.status(500).json({ msg: err.message });
     }
