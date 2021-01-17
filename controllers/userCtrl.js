@@ -1,4 +1,7 @@
 const Users = require('../models/userModel');
+const bcrypt = require('bcrypt');
+const jwtCtrl = require('../helpers/jwt');
+const sendMail = require('../helpers/sendMail');
 
 module.exports = {
   register: async (req, res) => {
@@ -23,13 +26,32 @@ module.exports = {
           .json({ msg: 'Password must be at least 6 characters long' });
       }
 
-      res.json({ msg: 'registered' });
+      //password hash
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      //save to mongodb
+      const newUser = {
+        name,
+        email,
+        password: hashedPassword,
+      };
+
+      const activation_token = jwtCtrl.createActivationToken(newUser);
+
+      const url = `${process.env.CLIENT_URL}/user/activate/${activation_token}`;
+      console.log(url);
+      sendMail(email, url);
+
+      res.json({
+        msg: 'Register Success! Please activate your email to start',
+      });
     } catch (err) {
       res.status(500).json({ msg: err.message });
     }
   },
 };
 
+//email validation
 function validateEmail(email) {
   const re = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
   return re.test(email);
