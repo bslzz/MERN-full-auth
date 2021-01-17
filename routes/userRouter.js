@@ -21,6 +21,16 @@ router.route('/reset').post(auth, userCtrl.resetPassword);
 
 router.route('/infor').get(auth, userCtrl.getUserInfo);
 
-router.route('/all_infor').get(authAdmin, userCtrl.getUsersAllInfo);
+router.route('/all_infor').get(auth, authAdmin, userCtrl.getUsersAllInfo);
+
+router.route('/logout').get(userCtrl.logOut);
+
+router.route('/update').patch(auth, userCtrl.updateUser);
+
+router
+  .route('/update_role/:id')
+  .patch(auth, authAdmin, userCtrl.updateUsersRole);
+
+router.route('/delete/:id').delete(auth, authAdmin, userCtrl.deleteUser);
 
 module.exports = router;

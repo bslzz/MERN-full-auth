@@ -119,7 +119,6 @@ module.exports = {
       if (!user)
         return res.status(400).json({ msg: 'This email does not exist' });
 
-      console.log('user', user._id);
       const access_token = jwtCtrl.createAccessToken({ id: user._id });
       const url = `${process.env.CLIENT_URL}/user/reset/${access_token}`;
 
@@ -133,10 +132,8 @@ module.exports = {
   resetPassword: async (req, res) => {
     try {
       const { password } = req.body;
-      console.log('password', password);
       const passwordHash = await bcrypt.hash(password, 10);
 
-      console.log('_id', req.user.id);
       await Users.findOneAndUpdate(
         { _id: req.user.id },
         { password: passwordHash }
@@ -150,17 +147,55 @@ module.exports = {
 
   getUserInfo: async (req, res) => {
     try {
-      console.log(req.user.id);
       const user = await Users.findById(req.user.id).select('-password');
       res.json(user);
     } catch (err) {
       res.status(500).json({ msg: err.message });
     }
   },
+
   getUsersAllInfo: async (req, res) => {
     try {
       const users = await Users.find().select('-password');
       res.json(users);
+    } catch (err) {
+      res.status(500).json({ msg: err.message });
+    }
+  },
+
+  logOut: async (req, res) => {
+    try {
+      res.clearCookie('refreshtoken', { path: '/user/refresh_token' });
+      return res.json({ msg: 'Logged Out' });
+    } catch (err) {
+      res.status(500).json({ msg: err.message });
+    }
+  },
+
+  updateUser: async (req, res) => {
+    try {
+      const { name, avatar } = req.body;
+      await Users.findOneAndUpdate({ _id: req.user.id }, { name, avatar });
+      res.json({ msg: 'Update Success' });
+    } catch (err) {
+      res.status(500).json({ msg: err.message });
+    }
+  },
+
+  updateUsersRole: async (req, res) => {
+    try {
+      const { role } = req.body;
+      await Users.findOneAndUpdate({ _id: req.params.id }, { role });
+      res.json({ msg: 'Updated Successfully' });
+    } catch (err) {
+      res.status(500).json({ msg: err.message });
+    }
+  },
+
+  deleteUser: async (req, res) => {
+    try {
+      await Users.findByIdAndDelete(req.params.id);
+      res.json({ msg: 'Deleted Successfully' });
     } catch (err) {
       res.status(500).json({ msg: err.message });
     }
