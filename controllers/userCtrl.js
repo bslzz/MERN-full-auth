@@ -39,7 +39,7 @@ module.exports = {
       const activation_token = jwtCtrl.createActivationToken(newUser);
 
       const url = `${process.env.CLIENT_URL}/user/activate/${activation_token}`;
-      sendMail(email, url);
+      sendMail(email, url, 'Verify your email address');
 
       res.json({
         msg: 'Register Success! Please activate your email to start',
@@ -101,11 +101,66 @@ module.exports = {
       if (!rf_token) return res.status(400).json({ msg: 'Please login' });
       jwt.verify(rf_token, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
         if (err) return res.status(400).json({ msg: 'Please login now' });
-
         const access_token = jwtCtrl.createAccessToken({ id: user.id });
 
         res.json({ access_token });
       });
+    } catch (err) {
+      res.status(500).json({ msg: err.message });
+    }
+  },
+
+  forgotPassword: async (req, res) => {
+    try {
+      const { email } = req.body;
+
+      const user = await Users.findOne({ email });
+
+      if (!user)
+        return res.status(400).json({ msg: 'This email does not exist' });
+
+      console.log('user', user._id);
+      const access_token = jwtCtrl.createAccessToken({ id: user._id });
+      const url = `${process.env.CLIENT_URL}/user/reset/${access_token}`;
+
+      sendMail(email, url, 'Reset your password');
+      res.json({ msg: 'Re-send the password! Please check your email' });
+    } catch (err) {
+      res.status(500).json({ msg: err.message });
+    }
+  },
+
+  resetPassword: async (req, res) => {
+    try {
+      const { password } = req.body;
+      console.log('password', password);
+      const passwordHash = await bcrypt.hash(password, 10);
+
+      console.log('_id', req.user.id);
+      await Users.findOneAndUpdate(
+        { _id: req.user.id },
+        { password: passwordHash }
+      );
+
+      res.json({ msg: 'Password Changed Successfully!' });
+    } catch (err) {
+      res.status(500).json({ msg: err.message });
+    }
+  },
+
+  getUserInfo: async (req, res) => {
+    try {
+      console.log(req.user.id);
+      const user = await Users.findById(req.user.id).select('-password');
+      res.json(user);
+    } catch (err) {
+      res.status(500).json({ msg: err.message });
+    }
+  },
+  getUsersAllInfo: async (req, res) => {
+    try {
+      const users = await Users.find().select('-password');
+      res.json(users);
     } catch (err) {
       res.status(500).json({ msg: err.message });
     }

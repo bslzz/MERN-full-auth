@@ -21,7 +21,7 @@ const oauth2Client = new OAuth2(
 
 //send mail
 
-const sendMail = (to, url) => {
+const sendMail = (to, url, txt) => {
   oauth2Client.setCredentials({
     refresh_token: MAILING_SERVICE_REFRESH_TOKEN,
   });
@@ -47,6 +47,7 @@ const sendMail = (to, url) => {
     html: `
     <div>
     <p> Click to validate your email </p>
+    <p> ${txt} </p>
     <div> ${url} </div>
     </div>
     `,
