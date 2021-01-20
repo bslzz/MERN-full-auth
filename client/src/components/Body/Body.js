@@ -1,7 +1,15 @@
 import React from 'react';
+import { Route, Switch } from 'react-router-dom';
+import Login from '../../auth/Login';
 
 const Body = () => {
-  return <div>Body</div>;
+  return (
+    <section>
+      <Switch>
+        <Route path="/login" component={Login} />
+      </Switch>
+    </section>
+  );
 };
 
 export default Body;
