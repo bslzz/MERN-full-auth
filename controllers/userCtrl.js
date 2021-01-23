@@ -82,7 +82,7 @@ module.exports = {
       //validation
       if (!email || !password)
         return res.status(400).json({
-          msg: !email ? 'Email is required' : 'Password is required',
+          msg: 'Please fill in all fields.',
         });
       if (!validateEmail(email)) {
         return res.status(400).json({ msg: 'Email is not valid' });
