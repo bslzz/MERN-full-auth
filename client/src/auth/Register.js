@@ -5,33 +5,31 @@ import {
   showErrMsg,
   showSuccessMsg,
 } from '../utils/notifications/Notification';
-import { useDispatch } from 'react-redux';
-import { dispatchLogin } from '../redux/actions/authActions';
 
-const Login = () => {
-  const dispatch = useDispatch();
+const Register = () => {
   const history = useHistory();
 
   const [user, setUser] = useState({
+    name: '',
     email: '',
     password: '',
+    cf_password: '',
     err: '',
     success: '',
   });
 
-  const { email, password, err, success } = user;
+  const { name, email, password, cf_password, err, success } = user;
 
   const handleChangeInput = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value, err: '', success: '' });
   };
 
-  const handlleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('/user/login', { email, password });
+      const res = await axios.post('/user/register', { name, email, password });
       setUser({ ...user, err: '', success: res.data.msg });
-      localStorage.setItem('firstLogin', true);
-      dispatch(dispatchLogin());
+
       history.push('/');
     } catch (err) {
       err.response.data.msg &&
@@ -41,9 +39,20 @@ const Login = () => {
 
   return (
     <div className="login_page">
-      <h2>Login</h2>
+      <h2>Register</h2>
       {err && showErrMsg(err)} {success && showSuccessMsg(success)}
-      <form onSubmit={handlleSubmit}>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="name">Name</label>
+          <input
+            type="text"
+            placeholder="Enter your name"
+            id="name"
+            value={name}
+            name="name"
+            onChange={handleChangeInput}
+          />
+        </div>
         <div>
           <label htmlFor="email">Email Address</label>
           <input
@@ -66,16 +75,26 @@ const Login = () => {
             onChange={handleChangeInput}
           />
         </div>
+        <div>
+          <label htmlFor="cf_password">Confirm Password</label>
+          <input
+            type="password"
+            placeholder="Confirm your password"
+            id="cf_password"
+            value={cf_password}
+            name="cf_password"
+            onChange={handleChangeInput}
+          />
+        </div>
         <div className="row">
-          <button type="submit">Login</button>
-          <Link to="/forgot_password">Forgot your password?</Link>
+          <button type="submit">Register</button>
         </div>
       </form>
       <p>
-        New user? <Link to="/register">Register</Link>
+        Already have an account? <Link to="/login">Login</Link>
       </p>
     </div>
   );
 };
 
-export default Login;
+export default Register;
