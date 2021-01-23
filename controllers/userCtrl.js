@@ -76,6 +76,15 @@ module.exports = {
   login: async (req, res) => {
     try {
       const { email, password } = req.body;
+      if (!email || !password)
+        return res.status(400).json({
+          msg: !email
+            ? 'Email is required'
+            : !password
+            ? 'Password is required'
+            : 'Email and Password required',
+        });
+
       const user = await Users.findOne({ email });
       if (!user)
         return res.status(400).json({ msg: 'This email does not exist' });

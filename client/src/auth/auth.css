@@ -40,4 +40,9 @@
   text-transform: uppercase;
   letter-spacing: 1.5px;
   margin-right: 10px;
+  opacity: 0.7;
+}
+
+.login_page .row button:hover {
+  opacity: 1;
 }
