@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import {
   showErrMsg,
   showSuccessMsg,
 } from '../utils/notifications/Notification';
+import { useDispatch } from 'react-redux';
+import { dispatchLogin } from '../redux/actions/authActions';
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const history = useHistory();
+
   const [user, setUser] = useState({
     email: '',
     password: '',
@@ -26,8 +31,9 @@ const Login = () => {
       const res = await axios.post('/user/login', { email, password });
       setUser({ ...user, err: '', success: res.data.msg });
       localStorage.setItem('firstLogin', true);
+      dispatch(dispatchLogin);
+      history.push('/');
     } catch (err) {
-      console.log(err.response.data.msg);
       err.response.data.msg &&
         setUser({ ...user, err: err.response.data.msg, success: '' });
     }
