@@ -24,7 +24,8 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await axios.post('/user/login', { email, password });
-      console.log(res);
+      setUser({ ...user, err: '', success: res.data.msg });
+      localStorage.setItem('firstLogin', true);
     } catch (err) {
       console.log(err.response.data.msg);
       err.response.data.msg &&

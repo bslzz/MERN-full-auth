@@ -8,6 +8,8 @@ module.exports = {
   register: async (req, res) => {
     try {
       const { name, email, password } = req.body;
+
+      //validation
       if (!name || !email || !password) {
         return res
           .status(400)
@@ -76,14 +78,20 @@ module.exports = {
   login: async (req, res) => {
     try {
       const { email, password } = req.body;
+
+      //validation
       if (!email || !password)
         return res.status(400).json({
-          msg: !email
-            ? 'Email is required'
-            : !password
-            ? 'Password is required'
-            : 'Email and Password required',
+          msg: !email ? 'Email is required' : 'Password is required',
         });
+      if (!validateEmail(email)) {
+        return res.status(400).json({ msg: 'Email is not valid' });
+      }
+      if (password.length < 6) {
+        return res
+          .status(400)
+          .json({ msg: 'Password must be at least 6 characters long' });
+      }
 
       const user = await Users.findOne({ email });
       if (!user)
