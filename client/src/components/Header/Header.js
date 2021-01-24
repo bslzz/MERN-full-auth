@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -6,6 +7,16 @@ const Header = () => {
   const auth = useSelector((state) => state.auth);
 
   const { user, isLoggedin } = auth;
+
+  const handleLogout = async () => {
+    try {
+      await axios.get('/user/logout');
+      localStorage.removeItem('firstLogin');
+      window.location.href = '/';
+    } catch (error) {
+      window.location.href = '/';
+    }
+  };
 
   const userLink = () => {
     return (
@@ -19,7 +30,9 @@ const Header = () => {
             <Link to="/profile">Profile</Link>
           </li>
           <li>
-            <Link to="/">Logout</Link>
+            <Link to="/" onClick={handleLogout}>
+              Logout
+            </Link>
           </li>
         </ul>
       </li>
