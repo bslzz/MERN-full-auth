@@ -40,7 +40,7 @@ module.exports = {
 
       const activation_token = jwtCtrl.createActivationToken(newUser);
 
-      const url = `${process.env.CLIENT_URL}/user/activate/${activation_token}`;
+      const url = `${process.env.CLIENT_URL}/user/activation/${activation_token}`;
       sendMail(email, url, 'Verify your email address');
 
       res.json({

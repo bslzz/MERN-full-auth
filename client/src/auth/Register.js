@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import {
   showErrMsg,
@@ -13,8 +13,6 @@ import {
 } from '../utils/validation/Validation';
 
 const Register = () => {
-  const history = useHistory();
-
   const [user, setUser] = useState({
     name: '',
     email: '',
@@ -58,7 +56,14 @@ const Register = () => {
       });
     try {
       const res = await axios.post('/user/register', { name, email, password });
-      setUser({ ...user, err: '', success: res.data.msg });
+      setUser({
+        name: '',
+        email: '',
+        password: '',
+        cf_password: '',
+        err: '',
+        success: res.data.msg,
+      });
     } catch (err) {
       err.response.data.msg &&
         setUser({ ...user, err: err.response.data.msg, success: '' });
