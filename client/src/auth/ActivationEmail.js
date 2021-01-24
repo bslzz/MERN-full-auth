@@ -20,7 +20,7 @@ const ActivationEmail = () => {
           });
           setSuccess(res.data.msg);
         } catch (error) {
-          error.response.token.msg && setErr(error.response.token.msg);
+          error.response.data.msg && setErr(error.response.data.msg);
         }
       }
     };
