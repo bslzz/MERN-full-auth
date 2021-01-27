@@ -5,6 +5,7 @@ import ActivationEmail from '../../auth/ActivationEmail';
 import ForgotPassword from '../../auth/ForgotPassword';
 import Login from '../../auth/Login';
 import Register from '../../auth/Register';
+import ResetPassword from '../../auth/ResetPassword';
 import NotFound from '../NotFound/NotFound';
 
 const Body = () => {
@@ -18,6 +19,10 @@ const Body = () => {
         <Route
           path="/forgot_password"
           component={isLoggedin ? NotFound : ForgotPassword}
+        />
+        <Route
+          path="/user/reset/:token"
+          component={isLoggedin ? NotFound : ResetPassword}
         />
         <Route
           path="/user/activation/:activation_token"

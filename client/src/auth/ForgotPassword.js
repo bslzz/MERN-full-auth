@@ -4,7 +4,7 @@ import {
   showErrMsg,
   showSuccessMsg,
 } from '../utils/notifications/Notification';
-import { isEmail } from '../utils/validation/Validation';
+import { isEmail, isEmpty } from '../utils/validation/Validation';
 
 const ForgotPassword = () => {
   const [data, setData] = useState({
@@ -20,6 +20,12 @@ const ForgotPassword = () => {
   };
 
   const forgotPassword = async () => {
+    if (isEmpty(email))
+      return setData({
+        ...data,
+        err: 'Please fill in all fields.',
+        success: '',
+      });
     if (!isEmail(email))
       return setData({ ...data, err: 'Invalid email', success: '' });
     try {
