@@ -32,7 +32,7 @@ const Body = () => {
           path="/user/activation/:activation_token"
           component={ActivationEmail}
         />
-        <Route path="/profile" component={isLoggedin ? Profile : NotFoundgit} />
+        <Route path="/profile" component={isLoggedin ? Profile : NotFound} />
         <Route
           path="/edit_user/:id"
           component={isAdmin ? EditUser : NotFound}
