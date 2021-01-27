@@ -140,7 +140,7 @@ module.exports = {
       const url = `${process.env.CLIENT_URL}/user/reset/${access_token}`;
 
       sendMail(email, url, 'Reset your password');
-      res.json({ msg: 'Re-send the password! Please check your email' });
+      res.json({ msg: 'Reset link sent! Please check your email' });
     } catch (err) {
       res.status(500).json({ msg: err.message });
     }

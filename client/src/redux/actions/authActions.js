@@ -1,5 +1,5 @@
 import axios from 'axios';
-import ACTIONS from '.';
+import ACTIONS from './index';
 
 export const dispatchLogin = () => {
   return {

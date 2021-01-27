@@ -29,9 +29,9 @@ const App = () => {
 
   useEffect(() => {
     if (token) {
-      const getUser = () => {
+      const getUser = async () => {
         dispatchLogin(dispatchLogin());
-        return fetchUser(token).then((res) => {
+        return await fetchUser(token).then((res) => {
           dispatch(dispatchGetUser(res));
         });
       };

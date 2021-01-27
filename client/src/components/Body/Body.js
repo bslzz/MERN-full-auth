@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import ActivationEmail from '../../auth/ActivationEmail';
+import ForgotPassword from '../../auth/ForgotPassword';
 import Login from '../../auth/Login';
 import Register from '../../auth/Register';
 import NotFound from '../NotFound/NotFound';
@@ -12,15 +13,14 @@ const Body = () => {
   return (
     <section>
       <Switch>
-        <Route path="/login" exact component={isLoggedin ? NotFound : Login} />
+        <Route path="/login" component={isLoggedin ? NotFound : Login} />
+        <Route path="/register" component={isLoggedin ? NotFound : Register} />
         <Route
-          path="/register"
-          exact
-          component={isLoggedin ? NotFound : Register}
+          path="/forgot_password"
+          component={isLoggedin ? NotFound : ForgotPassword}
         />
         <Route
           path="/user/activation/:activation_token"
-          exact
           component={ActivationEmail}
         />
       </Switch>
