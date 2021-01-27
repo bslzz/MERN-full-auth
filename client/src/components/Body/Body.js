@@ -6,14 +6,18 @@ import ForgotPassword from '../../auth/ForgotPassword';
 import Login from '../../auth/Login';
 import Register from '../../auth/Register';
 import ResetPassword from '../../auth/ResetPassword';
+import Home from '../Home/Home';
 import NotFound from '../NotFound/NotFound';
+import EditUser from '../Profile/EditUser';
+import Profile from '../Profile/Profile';
 
 const Body = () => {
   const auth = useSelector((state) => state.auth);
-  const { isLoggedin } = auth;
+  const { isLoggedin, isAdmin } = auth;
   return (
     <section>
       <Switch>
+        <Route path="/" exact component={Home} />
         <Route path="/login" component={isLoggedin ? NotFound : Login} />
         <Route path="/register" component={isLoggedin ? NotFound : Register} />
         <Route
@@ -27,6 +31,12 @@ const Body = () => {
         <Route
           path="/user/activation/:activation_token"
           component={ActivationEmail}
+        />
+        <Route path="/profile" component={isLoggedin ? Profile : NotFoundgit} />
+        <Route
+          path="/edit_user/:id"
+          component={isAdmin ? EditUser : NotFound}
+          exact
         />
       </Switch>
     </section>
